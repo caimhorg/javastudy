@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xsi:schemaLocation="
+       http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/context
+       http://www.springframework.org/schema/context/spring-context.xsd
+       http://www.springframework.org/schema/mvc
+       http://www.springframework.org/schema/mvc/spring-mvc-3.2.xsd
+        http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd"
+       default-lazy-init="false">
+       
+	<!-- 添加注解驱动 -->  
+    <mvc:annotation-driven>
+    	<mvc:message-converters register-defaults="true">
+<!-- 			<bean class="org.springframework.http.converter.StringHttpMessageConverter"> -->
+<!-- 				<constructor-arg value="UTF-8" /> -->
+<!-- 				<property name="supportedMediaTypes"> -->
+<!-- 					<list> -->
+<!-- 						<value>application/json;charset=UTF-8</value> -->
+<!-- 						<value>text/json;charset=UTF-8</value> -->
+<!-- 						<value>*/*;charset=UTF-8</value> -->
+<!-- 					</list> -->
+<!-- 				</property> -->
+<!-- 			</bean> -->
+<!-- 			<bean -->
+<!-- 				class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter"> -->
+<!-- 				<property name="supportedMediaTypes"> -->
+<!-- 					<list> -->
+<!-- 						<value>application/json;charset=UTF-8</value> -->
+<!-- 						<value>text/json;charset=UTF-8</value> -->
+<!-- 						<value>*/*;charset=UTF-8</value> -->
+<!-- 					</list> -->
+<!-- 				</property> -->
+<!-- 			</bean> -->
+			<bean class="com.alibaba.fastjson.support.spring.FastJsonHttpMessageConverter">
+				<property name="supportedMediaTypes">
+					<list>
+						<value>text/html;charset=UTF-8</value>
+						<value>application/json;charset=UTF-8</value>
+					</list>
+				</property>
+			</bean>
+		</mvc:message-converters>
+    </mvc:annotation-driven>  
+    
+<!--     <mvc:resources mapping="/public/**" location="/public/" /> -->
+    
+    <!-- 默认扫描的包路径 -->  
+    <context:component-scan base-package="com.javastudy.**.controller"/>
+    
+    <!-- 视图解析器,负责根据return返回提供的视图信息查找对应的视图页面(.jsp或.html等)，在page下找到对应的文件 ，并把它返回给DispatcherServlet，后DispatcherServlet再把它返回给客户 -->
+    <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+        <property name="viewClass" value="org.springframework.web.servlet.view.JstlView"/>
+        <property name="prefix" value="/page"/>
+        <property name="suffix" value=".jsp"/>
+        <property name="order" value="1"/>
+    </bean>
+    
+<!--     <bean id="multipartResolver" -->
+<!--           class="org.springframework.web.multipart.commons.CommonsMultipartResolver"> -->
+<!--         <property name="defaultEncoding" value="UTF-8"/> -->
+<!--         指定所上传文件的总大小不能超过200MB。注意maxUploadSize属性的限制不是针对单个文件，而是所有文件的容量之和 -->
+<!--         <property name="maxUploadSize" value="200000000"/> -->
+<!--         <property name="maxInMemorySize" value="40960"/> -->
+<!--     </bean> -->
+    
+</beans>    

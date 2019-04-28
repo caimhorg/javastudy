@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://java.sun.com/xml/ns/javaee" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd" id="WebApp_ID" version="3.0">
+	<welcome-file-list>
+		<welcome-file>index.do</welcome-file>
+	</welcome-file-list>
+<!-- 	<error-page> -->
+<!--     	<error-code>404</error-code> -->
+<!--     	<location>/page/error/error404.jsp</location> -->
+<!--   	</error-page> -->
+	<!-- 全局参数,因为不属于任何一个servlet,但是所有的servlet都可以通过servletContext读取这个数据 -->
+	<context-param>
+    	<param-name>contextConfigLocation</param-name>
+    	<param-value>classpath:config/applicationContext.xml</param-value>
+	</context-param>
+<!-- 	<context-param> -->
+<!--     	<param-name>log4jConfigLocation</param-name> -->
+<!--     	<param-value>classpath:log4j.properties</param-value> -->
+<!-- 	</context-param> -->
+	<!-- ContextLoaderListener的作用就是启动Web容器时，自动装配ApplicationContext的配置信息。
+		因为它实现了ServletContextListener这个接口，在web.xml配置这个监听器，启动容器时，就会默认执行它实现的方法
+		ContextLoaderListener继承了ContextLoader类，所以整个加载配置过程由ContextLoader来完成，
+		spring默认生成XmlWebApplicationContext实例
+		默认加载/WEB-INF/applicationContext.xml -->
+	<listener>
+    	<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+	</listener>
+	<!-- log4j已过期,之后用log4j2代替 -->
+<!-- 	<listener> -->
+<!--     	<listener-class>org.springframework.web.util.Log4jConfigListener</listener-class> -->
+<!-- 	</listener> -->
+	<!-- 
+		springMVC核心servlet,拦截请求 
+		DispatcherServlet继承FrameworkServlet
+		FrameworkServlet继承HttpServletBean
+		FrameworkServlet实现ApplicationContextAware
+	初始化流程：先走HttpServletBean的init()方法获取init-param初始参数，
+		   FrameworkServlet的initServletBean()方法去获取容器，如果ServletContext中有springmvc的容器，就用这个
+		           如果没有就自己创建一个XmlWebApplicationContext，将spring根容器作为自己的父容器
+		   doService中去匹配controller中的接口，render渲染页面
+	-->
+	<servlet>
+		<servlet-name>Spring</servlet-name>
+    <servlet-class>
+    	org.springframework.web.servlet.DispatcherServlet
+    </servlet-class>
+    <init-param>
+    	<param-name>contextConfigLocation</param-name>
+    	<param-value>classpath:config/spring-mvc.xml</param-value>
+    </init-param>
+    <load-on-startup>1</load-on-startup>
+    </servlet>
+	<servlet-mapping>
+    	<servlet-name>Spring</servlet-name>
+    	<url-pattern>*.do</url-pattern>
+	</servlet-mapping>
+  
+  <!-- WebService 拦截器 -->
+<!-- 	<servlet> -->
+<!-- 		<servlet-name>CXFServlet</servlet-name> -->
+<!-- 		<servlet-class>org.apache.cxf.transport.servlet.CXFServlet</servlet-class> -->
+<!-- 	</servlet> -->
+<!-- 	<servlet-mapping> -->
+<!-- 		<servlet-name>CXFServlet</servlet-name> -->
+<!-- 		<url-pattern>/services/*</url-pattern> -->
+<!-- 	</servlet-mapping> -->
+
+	<!-- 过滤请求中的字符串编码 -->
+	<filter>
+    	<filter-name>encodingFilter</filter-name>
+    	<filter-class>
+        	org.springframework.web.filter.CharacterEncodingFilter
+    	</filter-class>
+		<!-- 设置编码格式 -->
+    	<init-param>
+    		<param-name>encoding</param-name>
+        	<param-value>UTF-8</param-value>
+    	</init-param>
+		<!-- forceEncoding用来设置是否理会 request.getCharacterEncoding()方法,设置为true则强制覆盖之前的编码格式 -->
+    	<init-param>
+        	<param-name>forceEncoding</param-name>
+      		<param-value>true</param-value>
+        </init-param>
+	</filter>
+	<filter-mapping>
+    	<filter-name>encodingFilter</filter-name>
+    	<url-pattern>/*</url-pattern>
+	</filter-mapping>
+	<!-- session过期时间 -->
+	<session-config>
+    	<session-timeout>30</session-timeout>
+	</session-config>
+</web-app>
